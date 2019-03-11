@@ -1,0 +1,15 @@
+{
+  "name": "copy-request-attributes-between-envs",
+  "version": "1.0.0",
+  "description": "Script for copying request attributes from one dynatrace environment to other",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm index.j"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "https": "^1.0.0",
+    "util": "^0.11.1"
+  }
+}
