@@ -2,7 +2,8 @@ const https = require("https");
 var config = require("./config");
 
 // Dynatrace ENV Variables
-var ENVIRONMENT_URL = config.environment_url;
+var FROM_ENVIRONMENT_URL = config.from.environment_url;
+var TO_ENVIRONMENT_URL = config.to.environment_url;
 var FROM_TENANT = config.from.tenant;
 var FROM_API_TOKEN = config.from.api_token; 
 var TO_TENANT = config.to.tenant;
@@ -10,7 +11,7 @@ var TO_API_TOKEN = config.to.api_token;
 
 async function CopyAllRequestAttributes () {
     console.log("====== starting get request =======");
-    return await https.get('https://' + ENVIRONMENT_URL +'/e/' + FROM_TENANT +'/api/config/v1/requestAttributes?Api-Token=' + FROM_API_TOKEN, (resp) => {
+    return await https.get('https://' + FROM_ENVIRONMENT_URL +'/e/' + FROM_TENANT +'/api/config/v1/requestAttributes?Api-Token=' + FROM_API_TOKEN, (resp) => {
       var response = '';
       // A chunk of data has been recieved.
       resp.on('data', (chunk) => {
@@ -19,7 +20,7 @@ async function CopyAllRequestAttributes () {
       // The whole response has been received. Print out the result.
       resp.on('end', () => {
         var allRequestAttributes = JSON.parse(response).values;
-        if(allRequestAttributes[0] == undefined){
+        if(allRequestAttributes == undefined){
           return console.log("ERROR: Request Attributes not Found");
         }
         allRequestAttributes.forEach(async function(attribute){
@@ -32,7 +33,7 @@ async function CopyAllRequestAttributes () {
     });
 }
 async function getSpecificAttribute (id) {
-  return await https.get('https://' + ENVIRONMENT_URL + '/e/' + FROM_TENANT + '/api/config/v1/requestAttributes/' + id + '?includeProcessGroupReferences=false&Api-Token=' + FROM_API_TOKEN, (resp) => {
+  return await https.get('https://' + FROM_ENVIRONMENT_URL + '/e/' + FROM_TENANT + '/api/config/v1/requestAttributes/' + id + '?includeProcessGroupReferences=false&Api-Token=' + FROM_API_TOKEN, (resp) => {
       console.log(" Starting to get Request Attribute details");
       var response = '';
       // A chunk of data has been recieved.
@@ -58,7 +59,7 @@ function postAttributeToNewEnv(attribute){
 
     return new Promise((resolve, reject) => {
       const options = {
-          host: ENVIRONMENT_URL,
+          host: TO_ENVIRONMENT_URL,
           path: "/e/" + TO_TENANT + "/api/config/v1/requestAttributes",
           method: 'POST',
           headers : {

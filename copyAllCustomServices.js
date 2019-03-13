@@ -2,7 +2,8 @@ const https = require("https");
 var config = require("./config");
 
 // Dynatrace ENV Variables
-var ENVIRONMENT_URL = config.environment_url;
+var FROM_ENVIRONMENT_URL = config.from.environment_url;
+var TO_ENVIRONMENT_URL = config.to.environment_url;
 var FROM_TENANT = config.from.tenant;
 var FROM_API_TOKEN = config.from.api_token; 
 var TO_TENANT = config.to.tenant;
@@ -11,7 +12,7 @@ var TECHNOLOGY = process.argv[2] != null ? process.argv[2] : "java";
 
 async function CopyAllCustomServices () {
     console.log("====== starting get request =======");
-    return await https.get('https://' + ENVIRONMENT_URL +'/e/' + FROM_TENANT +'/api/config/v1/customServices/' + TECHNOLOGY + '?Api-Token=' + FROM_API_TOKEN, (resp) => {
+    return await https.get('https://' + FROM_ENVIRONMENT_URL +'/e/' + FROM_TENANT +'/api/config/v1/customServices/' + TECHNOLOGY + '?Api-Token=' + FROM_API_TOKEN, (resp) => {
       var response = '';
       // A chunk of data has been recieved.
       resp.on('data', (chunk) => {
@@ -20,7 +21,7 @@ async function CopyAllCustomServices () {
       // The whole response has been received. Print out the result.
       resp.on('end', () => {
         var allCustomServices = JSON.parse(response).values;
-        if(allCustomServices[0] == undefined){
+        if(allCustomServices == undefined){
           return console.log("ERROR: Custom Services not Found");
         }
         allCustomServices.forEach(async function(attribute){
@@ -34,7 +35,7 @@ async function CopyAllCustomServices () {
 }
 
 async function getSpecificService (id) {
-  return await https.get('https://' + ENVIRONMENT_URL + '/e/' + FROM_TENANT + '/api/config/v1/customServices/' + TECHNOLOGY + '/' + id + '?includeProcessGroupReferences=false&Api-Token=' + FROM_API_TOKEN, (resp) => {
+  return await https.get('https://' + FROM_ENVIRONMENT_URL + '/e/' + FROM_TENANT + '/api/config/v1/customServices/' + TECHNOLOGY + '/' + id + '?includeProcessGroupReferences=false&Api-Token=' + FROM_API_TOKEN, (resp) => {
       console.log(" Starting to get Custom Service details");
       var response = '';
       // A chunk of data has been recieved.
@@ -70,7 +71,7 @@ function postCustomServiceToNewEnv(attribute){
 
     return new Promise((resolve, reject) => {
       const options = {
-          host: ENVIRONMENT_URL,
+          host: TO_ENVIRONMENT_URL,
           path: "/e/" + TO_TENANT + "/api/config/v1/customServices/" + TECHNOLOGY,
           method: 'POST',
           headers : {
