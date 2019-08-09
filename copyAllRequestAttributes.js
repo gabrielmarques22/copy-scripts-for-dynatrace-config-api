@@ -11,7 +11,7 @@ var TO_API_TOKEN = config.to.api_token;
 
 async function CopyAllRequestAttributes () {
     console.log("====== starting get request =======");
-    return await https.get('https://' + FROM_ENVIRONMENT_URL +'/e/' + FROM_TENANT +'/api/config/v1/requestAttributes?Api-Token=' + FROM_API_TOKEN, (resp) => {
+    return await https.get('https://' + FROM_ENVIRONMENT_URL +'/e/' + FROM_TENANT +'/api/config/v1/service/requestAttributes?Api-Token=' + FROM_API_TOKEN, (resp) => {
       var response = '';
       // A chunk of data has been recieved.
       resp.on('data', (chunk) => {
@@ -33,7 +33,7 @@ async function CopyAllRequestAttributes () {
     });
 }
 async function getSpecificAttribute (id) {
-  return await https.get('https://' + FROM_ENVIRONMENT_URL + '/e/' + FROM_TENANT + '/api/config/v1/requestAttributes/' + id + '?includeProcessGroupReferences=false&Api-Token=' + FROM_API_TOKEN, (resp) => {
+  return await https.get('https://' + FROM_ENVIRONMENT_URL + '/e/' + FROM_TENANT + '/api/config/v1/service/requestAttributes/' + id + '?includeProcessGroupReferences=false&Api-Token=' + FROM_API_TOKEN, (resp) => {
       console.log(" Starting to get Request Attribute details");
       var response = '';
       // A chunk of data has been recieved.
@@ -60,7 +60,7 @@ function postAttributeToNewEnv(attribute){
     return new Promise((resolve, reject) => {
       const options = {
           host: TO_ENVIRONMENT_URL,
-          path: "/e/" + TO_TENANT + "/api/config/v1/requestAttributes",
+          path: "/e/" + TO_TENANT + "/api/config/v1/service/requestAttributes",
           method: 'POST',
           headers : {
               "Authorization" : "Api-Token " + TO_API_TOKEN,

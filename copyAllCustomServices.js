@@ -12,7 +12,7 @@ var TECHNOLOGY = process.argv[2] != null ? process.argv[2] : "java";
 
 async function CopyAllCustomServices () {
     console.log("====== starting get request =======");
-    return await https.get('https://' + FROM_ENVIRONMENT_URL +'/e/' + FROM_TENANT +'/api/config/v1/customServices/' + TECHNOLOGY + '?Api-Token=' + FROM_API_TOKEN, (resp) => {
+    return await https.get('https://' + FROM_ENVIRONMENT_URL +'/e/' + FROM_TENANT +'/api/config/v1/service/customServices/' + TECHNOLOGY + '?Api-Token=' + FROM_API_TOKEN, (resp) => {
       var response = '';
       // A chunk of data has been recieved.
       resp.on('data', (chunk) => {
@@ -35,7 +35,7 @@ async function CopyAllCustomServices () {
 }
 
 async function getSpecificService (id) {
-  return await https.get('https://' + FROM_ENVIRONMENT_URL + '/e/' + FROM_TENANT + '/api/config/v1/customServices/' + TECHNOLOGY + '/' + id + '?includeProcessGroupReferences=false&Api-Token=' + FROM_API_TOKEN, (resp) => {
+  return await https.get('https://' + FROM_ENVIRONMENT_URL + '/e/' + FROM_TENANT + '/api/config/v1/service/customServices/' + TECHNOLOGY + '/' + id + '?includeProcessGroupReferences=false&Api-Token=' + FROM_API_TOKEN, (resp) => {
       console.log(" Starting to get Custom Service details");
       var response = '';
       // A chunk of data has been recieved.
@@ -72,7 +72,7 @@ function postCustomServiceToNewEnv(attribute){
     return new Promise((resolve, reject) => {
       const options = {
           host: TO_ENVIRONMENT_URL,
-          path: "/e/" + TO_TENANT + "/api/config/v1/customServices/" + TECHNOLOGY,
+          path: "/e/" + TO_TENANT + "/api/config/v1/service/customServices/" + TECHNOLOGY,
           method: 'POST',
           headers : {
               "Authorization" : "Api-Token " + TO_API_TOKEN,
